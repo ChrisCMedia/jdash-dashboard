@@ -7,6 +7,7 @@ import {
 } from '@/components/ui/dialog'
 import { cn } from '@/lib/utils'
 import { Calendar, Hash, Image, Lock, MessageSquare, PenTool } from 'lucide-react'
+import { LinkedInPreview } from './linkedin-preview'
 
 interface PostEditorProps {
     post: Post | null
@@ -49,10 +50,19 @@ export function PostEditor({ post, isOpen, onClose, onSave }: PostEditorProps) {
 
     if (!post) return null
 
+    // Construct real-time preview object
+    const previewPost = {
+        ...post,
+        hook,
+        content,
+        visuals_placeholder: visuals,
+        internal_notes: notes
+    }
+
     return (
         <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-                <DialogHeader>
+            <DialogContent className="max-w-5xl max-h-[90vh] overflow-hidden flex flex-col p-0 gap-0">
+                <DialogHeader className="p-6 pb-2 border-b border-white/5 bg-slate-900">
                     <DialogTitle className="flex items-center gap-2 font-serif text-2xl text-gold-500">
                         <PenTool className="w-5 h-5" />
                         Edit Post
@@ -63,84 +73,96 @@ export function PostEditor({ post, isOpen, onClose, onSave }: PostEditorProps) {
                     </div>
                 </DialogHeader>
 
-                <div className="grid gap-6 py-4">
-                    {/* Hook */}
-                    <div className="space-y-2">
-                        <label className="text-xs font-semibold uppercase tracking-wider text-slate-400">Hook / Headline</label>
-                        <input
-                            value={hook}
-                            onChange={(e) => setHook(e.target.value)}
-                            className="w-full bg-slate-900 border border-slate-800 rounded-lg px-4 py-3 text-lg font-medium text-white focus:border-gold-500/50 outline-none transition-colors"
-                            placeholder="Grab attention immediately..."
-                        />
-                    </div>
-
-                    {/* Content */}
-                    <div className="space-y-2">
-                        <label className="text-xs font-semibold uppercase tracking-wider text-slate-400">Content Body</label>
-                        <textarea
-                            value={content}
-                            onChange={(e) => setContent(e.target.value)}
-                            className="w-full h-40 bg-slate-900 border border-slate-800 rounded-lg px-4 py-3 text-slate-300 focus:border-gold-500/50 outline-none transition-colors resize-none leading-relaxed"
-                            placeholder="Write your main content here..."
-                        />
-                    </div>
-
-                    {/* Visuals & Hashtags Grid */}
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                            <label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
-                                <Image className="w-3 h-3" /> Visuals
-                            </label>
-                            <textarea
-                                value={visuals}
-                                onChange={(e) => setVisuals(e.target.value)}
-                                className="w-full h-24 bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-300 focus:border-gold-500/50 outline-none resize-none"
-                                placeholder="Describe image or video..."
-                            />
-                        </div>
-                        <div className="space-y-4">
+                <div className="flex flex-1 overflow-hidden">
+                    {/* Left Column: Form */}
+                    <div className="flex-1 overflow-y-auto p-6 border-r border-white/5 bg-slate-950">
+                        <div className="grid gap-6">
+                            {/* Hook */}
                             <div className="space-y-2">
-                                <label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
-                                    <Hash className="w-3 h-3" /> Hashtags
-                                </label>
+                                <label className="text-xs font-semibold uppercase tracking-wider text-slate-400">Hook / Headline</label>
+                                <input
+                                    value={hook}
+                                    onChange={(e) => setHook(e.target.value)}
+                                    className="w-full bg-slate-900 border border-slate-800 rounded-lg px-4 py-3 text-lg font-medium text-white focus:border-gold-500/50 outline-none transition-colors"
+                                    placeholder="Grab attention immediately..."
+                                />
+                            </div>
+
+                            {/* Content */}
+                            <div className="space-y-2">
+                                <label className="text-xs font-semibold uppercase tracking-wider text-slate-400">Content Body</label>
                                 <textarea
-                                    value={hashtags}
-                                    onChange={(e) => setHashtags(e.target.value)}
-                                    className="w-full h-24 bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-sm text-blue-400 focus:border-gold-500/50 outline-none resize-none"
-                                    placeholder="#RealEstate..."
+                                    value={content}
+                                    onChange={(e) => setContent(e.target.value)}
+                                    className="w-full h-64 bg-slate-900 border border-slate-800 rounded-lg px-4 py-3 text-slate-300 focus:border-gold-500/50 outline-none transition-colors resize-none leading-relaxed font-mono text-sm"
+                                    placeholder="Write your main content here..."
+                                />
+                            </div>
+
+                            {/* Visuals & Hashtags Grid */}
+                            <div className="grid grid-cols-1 gap-4">
+                                <div className="space-y-2">
+                                    <label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
+                                        <Image className="w-3 h-3" /> Visuals
+                                    </label>
+                                    <textarea
+                                        value={visuals}
+                                        onChange={(e) => setVisuals(e.target.value)}
+                                        className="w-full h-20 bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-300 focus:border-gold-500/50 outline-none resize-none"
+                                        placeholder="Describe image or video..."
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    {/* Hashtags are now integrated in content usually, but keeping field if needed. 
+                                          Let's show it but maybe less prominent if user adds them in content. 
+                                          Actually user requested separate field. */}
+                                    <label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
+                                        <Hash className="w-3 h-3" /> Hashtags
+                                    </label>
+                                    <textarea
+                                        value={hashtags}
+                                        onChange={(e) => setHashtags(e.target.value)}
+                                        className="w-full h-20 bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-sm text-blue-400 focus:border-gold-500/50 outline-none resize-none"
+                                        placeholder="#RealEstate..."
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Internal Notes */}
+                            <div className="space-y-2 pt-4 border-t border-slate-800">
+                                <label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-yellow-500/70">
+                                    <Lock className="w-3 h-3" /> Internal Notes (Private)
+                                </label>
+                                <input
+                                    value={notes}
+                                    onChange={(e) => setNotes(e.target.value)}
+                                    className="w-full bg-slate-900/50 border border-slate-800 rounded-lg px-4 py-2 text-sm text-slate-400 focus:border-gold-500/50 outline-none"
+                                    placeholder="Notes for the team..."
                                 />
                             </div>
                         </div>
                     </div>
 
-                    {/* Internal Notes */}
-                    <div className="space-y-2 pt-4 border-t border-slate-800">
-                        <label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-yellow-500/70">
-                            <Lock className="w-3 h-3" /> Internal Notes (Private)
-                        </label>
-                        <input
-                            value={notes}
-                            onChange={(e) => setNotes(e.target.value)}
-                            className="w-full bg-slate-900/50 border border-slate-800 rounded-lg px-4 py-2 text-sm text-slate-400 focus:border-gold-500/50 outline-none"
-                            placeholder="Notes for the team..."
-                        />
-                    </div>
-
-                    {/* Client Feedback History (Read Only) */}
-                    {post.feedback && (
-                        <div className="space-y-2 pt-4 border-t border-slate-800">
-                            <label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-red-400/70">
-                                <MessageSquare className="w-3 h-3" /> Client Feedback
-                            </label>
-                            <div className="p-3 bg-red-950/10 border border-red-900/20 rounded-lg text-sm text-red-200">
-                                {post.feedback}
-                            </div>
+                    {/* Right Column: Preview */}
+                    <div className="hidden lg:flex flex-1 bg-slate-100 flex-col">
+                        <div className="p-3 border-b border-slate-200 bg-white text-xs font-semibold text-slate-500 uppercase tracking-wider text-center">
+                            Live Preview
                         </div>
-                    )}
+                        <div className="flex-1 overflow-y-auto p-8 flex items-start justify-center bg-slate-100">
+                            <LinkedInPreview post={previewPost} />
+                        </div>
+                    </div>
                 </div>
 
-                <DialogFooter className="gap-2">
+                <DialogFooter className="p-6 pt-4 border-t border-white/5 bg-slate-900 gap-2">
+                    {/* Client Feedback History (Compact) */}
+                    {post.feedback && (
+                        <div className="mr-auto flex items-center gap-2 text-red-300 bg-red-950/20 px-3 py-1 rounded text-xs border border-red-500/20">
+                            <MessageSquare className="w-3 h-3" />
+                            <span className="truncate max-w-[200px]">{post.feedback}</span>
+                        </div>
+                    )}
+
                     <button onClick={onClose} className="px-4 py-2 text-sm text-slate-400 hover:text-white transition-colors">
                         Cancel
                     </button>

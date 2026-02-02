@@ -8,13 +8,14 @@ import {
     Calendar,
     BarChart3,
     Settings,
-    LogOut,
-    UserCheck
+    UserCheck,
+    Smartphone
 } from 'lucide-react'
 
 const navItems = [
     { name: 'Calendar', href: '/calendar', icon: Calendar },
     { name: 'Board', href: '/', icon: LayoutDashboard },
+    { name: 'Feed View', href: '/feed', icon: Smartphone },
     { name: 'Client View', href: '/client', icon: UserCheck },
     { name: 'Analytics', href: '/analytics', icon: BarChart3 },
     { name: 'Settings', href: '/settings', icon: Settings },
