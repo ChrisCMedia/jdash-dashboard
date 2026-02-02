@@ -9,6 +9,10 @@ const MOCK_POSTS: Post[] = [
         date: '2026-02-02', // KW06 - Monday
         platform: 'LinkedIn Company',
         content: 'Markt-Update: Interest rates have stabilized this week, creating new opportunities for buyers...\n\n#RealEstate #MarketUpdate',
+        hook: 'Are interest rates finally stabilizing?',
+        visuals_placeholder: 'Chart showing interest rate trends over last 6 months.',
+        hashtags: '#RealEstate #MarketUpdate #InterestRates',
+        internal_notes: 'Check with finance team on exact percentage.',
         status: 'Draft',
         feedback: '',
         created_at: new Date().toISOString()
@@ -18,6 +22,10 @@ const MOCK_POSTS: Post[] = [
         date: '2026-02-04', // KW06 - Wednesday
         platform: 'LinkedIn Personal',
         content: 'Visited a new construction site today. The progress is amazing! Check out these views.\n\n#Construction #Architecture',
+        hook: 'The view from the top is breathtaking.',
+        visuals_placeholder: 'Selfie with hard hat + panoramic view of site.',
+        hashtags: '#Construction #Architecture #NewDevelopment',
+        internal_notes: '',
         status: 'Review',
         feedback: 'Please add more emojis to the first sentence.',
         created_at: new Date().toISOString()
@@ -27,6 +35,10 @@ const MOCK_POSTS: Post[] = [
         date: '2026-02-09', // KW07
         platform: 'LinkedIn Company',
         content: 'Open House Alert! Join us this weekend for an exclusive tour of our new luxury listings.',
+        hook: 'Your dream home is waiting.',
+        visuals_placeholder: 'Carousel of 5 best photos of the property.',
+        hashtags: '#OpenHouse #LuxuryLiving',
+        internal_notes: 'Make sure photos are high res.',
         status: 'Approved',
         feedback: '',
         created_at: new Date().toISOString()

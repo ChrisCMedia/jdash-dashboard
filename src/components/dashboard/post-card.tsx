@@ -8,6 +8,7 @@ import { Linkedin, MessageSquare, Calendar } from 'lucide-react'
 interface PostCardProps {
     post: Post
     onUpdate: (id: string, updates: Partial<Post>) => void
+    onEdit?: (post: Post) => void
 }
 
 const statusColors = {
@@ -17,13 +18,20 @@ const statusColors = {
     Posted: 'bg-blue-900/20 border-blue-500/50 text-blue-500',
 }
 
-export function PostCard({ post, onUpdate }: PostCardProps) {
+export function PostCard({ post, onUpdate, onEdit }: PostCardProps) {
     const [content, setContent] = useState(post.content)
+    const [hook, setHook] = useState(post.hook || '')
     const [feedback, setFeedback] = useState(post.feedback)
 
     const handleBlurContent = () => {
         if (content !== post.content) {
             onUpdate(post.id, { content })
+        }
+    }
+
+    const handleBlurHook = () => {
+        if (hook !== post.hook) {
+            onUpdate(post.id, { hook })
         }
     }
 
@@ -46,6 +54,14 @@ export function PostCard({ post, onUpdate }: PostCardProps) {
                     <span>{new Date(post.date).toLocaleDateString()}</span>
                 </div>
                 <div className="flex items-center gap-2">
+                    {onEdit && (
+                        <button
+                            onClick={() => onEdit(post)}
+                            className="text-xs text-gold-500 hover:text-gold-400 underline decoration-dotted underline-offset-4"
+                        >
+                            Edit Details
+                        </button>
+                    )}
                     {post.platform.includes('Personal') ? (
                         <div className="p-1 rounded bg-blue-500/10 text-blue-400" title="Personal Profile">
                             <Linkedin className="w-3 h-3" />
@@ -56,6 +72,17 @@ export function PostCard({ post, onUpdate }: PostCardProps) {
                         </div>
                     )}
                 </div>
+            </div>
+
+            {/* Hook Input */}
+            <div className="pb-2 border-b border-slate-800/50">
+                <input
+                    value={hook}
+                    onChange={(e) => setHook(e.target.value)}
+                    onBlur={handleBlurHook}
+                    placeholder="Hook / Headline..."
+                    className="w-full bg-transparent outline-none text-base font-semibold text-gold-100 placeholder:text-slate-600 truncate"
+                />
             </div>
 
             {/* Content */}

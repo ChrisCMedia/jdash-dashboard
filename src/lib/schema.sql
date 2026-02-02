@@ -4,6 +4,14 @@ create table posts (
   date date not null,
   platform text not null check (platform in ('LinkedIn Personal', 'LinkedIn Company')),
   content text default '',
+  
+  -- New Fields for Content Command Center
+  hook text default '',
+  visuals_placeholder text default '',
+  hashtags text default '',
+  internal_notes text default '',
+  client_feedback_history jsonb default '[]'::jsonb,
+  
   status text not null default 'Draft' check (status in ('Draft', 'Review', 'Approved', 'Posted')),
   feedback text default '',
   created_at timestamptz default now()
