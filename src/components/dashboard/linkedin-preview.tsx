@@ -4,15 +4,18 @@ import { Post } from '@/types'
 import { Linkedin, MoreHorizontal, ThumbsUp, MessageSquare, Share2, Send, Globe } from 'lucide-react'
 import { format } from 'date-fns'
 
+import { cn } from '@/lib/utils'
+
 interface LinkedInPreviewProps {
     post: Partial<Post>
+    className?: string
 }
 
-export function LinkedInPreview({ post }: LinkedInPreviewProps) {
+export function LinkedInPreview({ post, className }: LinkedInPreviewProps) {
     const isPersonal = post.platform === 'LinkedIn Personal'
 
     return (
-        <div className="bg-slate-900 border border-white/5 rounded-xl overflow-hidden shadow-2xl max-w-md mx-auto">
+        <div className={cn("bg-slate-900 border border-white/5 rounded-xl overflow-hidden shadow-2xl max-w-md mx-auto", className)}>
             {/* Header */}
             <div className="p-4 flex items-start justify-between">
                 <div className="flex gap-3">
