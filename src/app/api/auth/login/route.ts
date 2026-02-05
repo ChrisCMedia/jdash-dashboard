@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 
 export async function POST(request: Request) {
-// NUCLEAR EMERGENCY BYPASS: Jedes Passwort wird akzeptiert
+// EMERGENCY BYPASS
 const response = NextResponse.json({ success: true }, { status: 200 })
 response.cookies.set('auth-token', 'authenticated', {
 httpOnly: true,
