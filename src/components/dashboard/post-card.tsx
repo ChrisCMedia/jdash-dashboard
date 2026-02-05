@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Post, PostStatus } from '@/types'
 import { cn } from '@/lib/utils'
-import { Linkedin, MessageSquare, Calendar } from 'lucide-react'
+import { Linkedin, MessageSquare, Calendar, Pencil } from 'lucide-react'
 
 interface PostCardProps {
     post: Post
@@ -12,16 +12,17 @@ interface PostCardProps {
 }
 
 const statusColors = {
-    Draft: 'bg-slate-800 border-slate-700 text-slate-400',
-    Review: 'bg-gold-900/20 border-gold-500/50 text-gold-500',
-    Approved: 'bg-green-900/20 border-green-500/50 text-green-500',
-    Posted: 'bg-blue-900/20 border-blue-500/50 text-blue-500',
+    Draft: 'bg-slate-800/50 border-slate-700 text-silver-400',
+    Review: 'bg-gold-500/10 border-gold-500/30 text-gold-400',
+    Approved: 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400',
+    Posted: 'bg-blue-500/10 border-blue-500/30 text-blue-400',
 }
 
 export function PostCard({ post, onUpdate, onEdit }: PostCardProps) {
     const [content, setContent] = useState(post.content)
     const [hook, setHook] = useState(post.hook || '')
     const [feedback, setFeedback] = useState(post.feedback)
+    const [isHovered, setIsHovered] = useState(false)
 
     const handleBlurContent = () => {
         if (content !== post.content) {
@@ -46,42 +47,56 @@ export function PostCard({ post, onUpdate, onEdit }: PostCardProps) {
     }
 
     return (
-        <div className="group relative bg-slate-900 border border-slate-800 hover:border-gold-500/50 rounded-xl p-4 transition-all hover:shadow-xl hover:shadow-gold-900/10 flex flex-col gap-3">
+        <div
+            className={cn(
+                "group relative glass-subtle rounded-xl p-4 transition-all duration-300 flex flex-col gap-3 cursor-grab active:cursor-grabbing",
+                "border border-white/5 hover:border-gold-500/30 hover:shadow-lg hover:shadow-gold-500/5",
+                "hover:-translate-y-1"
+            )}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+        >
             {/* Header */}
             <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-xs text-slate-500">
+                <div className="flex items-center gap-2 text-xs text-silver-500">
                     <Calendar className="w-3 h-3" />
-                    <span>{new Date(post.date).toLocaleDateString()}</span>
+                    <span>{new Date(post.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
                 </div>
                 <div className="flex items-center gap-2">
                     {onEdit && (
                         <button
                             onClick={() => onEdit(post)}
-                            className="text-xs text-gold-500 hover:text-gold-400 underline decoration-dotted underline-offset-4"
+                            className={cn(
+                                "flex items-center gap-1 text-xs text-gold-500 hover:text-gold-400 transition-all duration-300",
+                                "opacity-0 group-hover:opacity-100"
+                            )}
                         >
-                            Edit Details
+                            <Pencil className="w-3 h-3" />
+                            Edit
                         </button>
                     )}
-                    {post.platform.includes('Personal') ? (
-                        <div className="p-1 rounded bg-blue-500/10 text-blue-400" title="Personal Profile">
-                            <Linkedin className="w-3 h-3" />
-                        </div>
-                    ) : (
-                        <div className="p-1 rounded bg-slate-700/50 text-slate-400" title="Company Page">
-                            <Linkedin className="w-3 h-3" />
-                        </div>
-                    )}
+                    <div
+                        className={cn(
+                            "p-1.5 rounded-lg transition-colors",
+                            post.platform.includes('Personal')
+                                ? "bg-gold-500/10 text-gold-400"
+                                : "bg-slate-700/50 text-silver-400"
+                        )}
+                        title={post.platform}
+                    >
+                        <Linkedin className="w-3 h-3" />
+                    </div>
                 </div>
             </div>
 
             {/* Hook Input */}
-            <div className="pb-2 border-b border-slate-800/50">
+            <div className="pb-2 border-b border-white/5">
                 <input
                     value={hook}
                     onChange={(e) => setHook(e.target.value)}
                     onBlur={handleBlurHook}
                     placeholder="Hook / Headline..."
-                    className="w-full bg-transparent outline-none text-base font-semibold text-gold-100 placeholder:text-slate-600 truncate"
+                    className="w-full bg-transparent outline-none text-sm font-semibold text-silver-100 placeholder:text-silver-700 truncate"
                 />
             </div>
 
@@ -92,21 +107,21 @@ export function PostCard({ post, onUpdate, onEdit }: PostCardProps) {
                     onChange={(e) => setContent(e.target.value)}
                     onBlur={handleBlurContent}
                     placeholder="Write your post content here..."
-                    className="w-full bg-transparent resize-none outline-none text-sm text-slate-300 placeholder:text-slate-600 min-h-[80px] leading-relaxed"
+                    className="w-full bg-transparent resize-none outline-none text-xs text-silver-300 placeholder:text-silver-700 min-h-[60px] leading-relaxed"
                 />
             </div>
 
             {/* Controls */}
-            <div className="flex flex-col gap-3 pt-3 border-t border-slate-800/50">
+            <div className="flex flex-col gap-3 pt-3 border-t border-white/5">
                 {/* Feedback Section */}
                 <div className="flex items-start gap-2">
-                    <MessageSquare className="w-3 h-3 mt-1 text-slate-500" />
+                    <MessageSquare className="w-3 h-3 mt-0.5 text-silver-600" />
                     <input
                         value={feedback}
                         onChange={(e) => setFeedback(e.target.value)}
                         onBlur={handleBlurFeedback}
                         placeholder="Add client feedback..."
-                        className="flex-1 bg-transparent outline-none text-xs text-gold-400/90 placeholder:text-slate-700"
+                        className="flex-1 bg-transparent outline-none text-xs text-gold-400/80 placeholder:text-silver-700"
                     />
                 </div>
 
@@ -115,14 +130,14 @@ export function PostCard({ post, onUpdate, onEdit }: PostCardProps) {
                     value={post.status}
                     onChange={handleStatusChange}
                     className={cn(
-                        "w-full text-xs font-medium py-1.5 px-2 rounded-lg cursor-pointer outline-none appearance-none text-center transition-colors",
+                        "w-full text-xs font-medium py-2 px-3 rounded-lg cursor-pointer outline-none appearance-none text-center transition-all duration-300 border",
                         statusColors[post.status]
                     )}
                 >
-                    <option value="Draft" className="bg-slate-900 text-slate-400">Draft</option>
-                    <option value="Review" className="bg-slate-900 text-gold-500">Review</option>
-                    <option value="Approved" className="bg-slate-900 text-green-500">Approved</option>
-                    <option value="Posted" className="bg-slate-900 text-blue-500">Posted</option>
+                    <option value="Draft" className="bg-slate-900 text-silver-400">Draft</option>
+                    <option value="Review" className="bg-slate-900 text-gold-400">Review</option>
+                    <option value="Approved" className="bg-slate-900 text-emerald-400">Approved</option>
+                    <option value="Posted" className="bg-slate-900 text-blue-400">Posted</option>
                 </select>
             </div>
         </div>

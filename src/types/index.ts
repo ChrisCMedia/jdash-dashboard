@@ -14,6 +14,27 @@ export interface Post {
     status: PostStatus
     feedback: string
     created_at: string
+    updated_at?: string
+    last_edited_by?: string
+    image_url?: string
+}
+
+export interface Settings {
+    appTitle: string
+    logoUrl?: string
+    linkedinProfileUrl: string
+    linkedinCompanyUrl: string
+    notifyOnFeedback: boolean
+    notifyOnApproval: boolean
+}
+
+export interface AnalyticsMetric {
+    id: string
+    date: string
+    impressions: number
+    engagements: number
+    new_followers: number
+    platform: 'Personal' | 'Company'
 }
 
 export type NewPost = Omit<Post, 'id' | 'created_at'>
