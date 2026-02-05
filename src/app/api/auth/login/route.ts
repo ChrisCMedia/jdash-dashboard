@@ -7,9 +7,9 @@ export async function POST(request: Request) {
 
         // 1. Serverseitige Passwort-Überprüfung
         let role = null
-        if (password === 'admin123') {
+        if (password === 'admin123!!!') {
             role = 'admin'
-        } else if (password === 'client123' || password === 'judith123') {
+        } else if (password === 'GolfErfolg2026!') {
             role = 'client'
         }
 
