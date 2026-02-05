@@ -17,15 +17,35 @@ export default function LoginPage() {
         setLoading(true)
         setError('')
 
-        // Fake API call / delay
-        await new Promise(resolve => setTimeout(resolve, 800))
+        try {
+            // Call the API Route to set the Cookie
+            const res = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ password }),
+            })
 
-        if (password === 'admin123') {
-            login('admin')
-        } else if (password === 'client123' || password === 'judith123') {
-            login('client')
-        } else {
-            setError('Incorrect password')
+            const data = await res.json()
+
+            if (!res.ok || !data.success) {
+                setError(data.message || 'Incorrect password')
+                setLoading(false)
+                return
+            }
+
+            // Success: Update client context and redirect
+            if (data.role) {
+                login(data.role)
+                // Note: useAuth().login() handles the router.push('/')
+                // The Cookie is now set, so Middleware will allow the request.
+            } else {
+                // Fallback
+                login('client')
+            }
+
+        } catch (err) {
+            console.error('Login error:', err)
+            setError('An error occurred. Please try again.')
             setLoading(false)
         }
     }
