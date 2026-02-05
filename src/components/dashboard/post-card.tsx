@@ -3,12 +3,13 @@
 import { useState } from 'react'
 import { Post, PostStatus } from '@/types'
 import { cn } from '@/lib/utils'
-import { Linkedin, MessageSquare, Calendar, Pencil } from 'lucide-react'
+import { Linkedin, MessageSquare, Calendar, Pencil, Trash2 } from 'lucide-react'
 
 interface PostCardProps {
     post: Post
     onUpdate: (id: string, updates: Partial<Post>) => void
     onEdit?: (post: Post) => void
+    onDelete?: (id: string) => void
 }
 
 const statusColors = {
@@ -18,7 +19,7 @@ const statusColors = {
     Posted: 'bg-blue-500/10 border-blue-500/30 text-blue-400',
 }
 
-export function PostCard({ post, onUpdate, onEdit }: PostCardProps) {
+export function PostCard({ post, onUpdate, onEdit, onDelete }: PostCardProps) {
     const [content, setContent] = useState(post.content)
     const [hook, setHook] = useState(post.hook || '')
     const [feedback, setFeedback] = useState(post.feedback)
@@ -73,6 +74,19 @@ export function PostCard({ post, onUpdate, onEdit }: PostCardProps) {
                         >
                             <Pencil className="w-3 h-3" />
                             Edit
+                        </button>
+                    )}
+                    {onDelete && (
+                        <button
+                            onClick={() => onDelete(post.id)}
+                            className={cn(
+                                "flex items-center gap-1 text-xs text-rose-500 hover:text-rose-400 transition-all duration-300",
+                                "opacity-0 group-hover:opacity-100"
+                            )}
+                            title="Delete Post"
+                        >
+                            <Trash2 className="w-3 h-3" />
+                            Delete
                         </button>
                     )}
                     <div

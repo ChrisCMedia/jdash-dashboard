@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { Post, PostStatus } from '@/types'
-import { updatePost } from '@/lib/data-service'
+import { updatePost, deletePost } from '@/lib/data-service'
 import { PostCard } from './post-card'
 import { cn } from '@/lib/utils'
 import { PostEditor } from './post-editor'
@@ -54,6 +54,25 @@ export function Board({ initialPosts }: BoardProps) {
         const updated = await updatePost(id, updates)
         if (updated) {
             setPosts(prev => prev.map(p => p.id === id ? updated : p))
+        }
+    }
+
+    const handleDelete = async (postId: string) => {
+        if (confirm('Are you sure you want to delete this post?')) {
+            // Optimistic update
+            setPosts(prev => prev.filter(p => p.id !== postId))
+
+            // Server update
+            const success = await deletePost(postId)
+            if (!success) {
+                // Revert if failed (simplified, ideally we would fetch fresh data)
+                // For now, simpler is better. If it fails, we might want to reload.
+                alert('Failed to delete post')
+            }
+
+            if (editingPost?.id === postId) {
+                setEditingPost(null)
+            }
         }
     }
 
@@ -124,6 +143,7 @@ export function Board({ initialPosts }: BoardProps) {
                                             post={post}
                                             onUpdate={onUpdate}
                                             onEdit={setEditingPost}
+                                            onDelete={handleDelete}
                                         />
                                     </div>
                                 ))}
