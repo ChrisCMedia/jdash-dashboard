@@ -8,7 +8,7 @@ type UserRole = 'admin' | 'client'
 interface AuthContextType {
     role: UserRole
     login: (role: UserRole) => void
-    logout: () => void
+    logout: () => Promise<void>
     isAuthenticated: boolean
 }
 
@@ -44,10 +44,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
     }
 
-    const logout = () => {
+    const logout = async () => {
+        try {
+            await fetch('/api/auth/logout', { method: 'POST' })
+        } catch (error) {
+            console.error('Logout failed', error)
+        }
+
         setIsAuthenticated(false)
         localStorage.removeItem('jdash_role')
         localStorage.removeItem('jdash_auth')
+        router.refresh()
         router.push('/login')
     }
 

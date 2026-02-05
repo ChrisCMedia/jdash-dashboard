@@ -3,14 +3,13 @@
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { LogOut, Home } from 'lucide-react'
+import { useAuth } from '@/components/providers/auth-provider'
 
 export function Navbar() {
-    const router = useRouter()
+    const { logout } = useAuth()
 
     const handleLogout = async () => {
-        await fetch('/api/auth/logout', { method: 'POST' })
-        router.refresh()
-        router.push('/login')
+        await logout()
     }
 
     return (
