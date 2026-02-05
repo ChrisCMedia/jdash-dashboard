@@ -93,17 +93,30 @@ export async function updatePost(id: string, updates: Partial<Post>): Promise<Po
 }
 
 export async function getAnalyticsMetrics(): Promise<AnalyticsMetric[]> {
-    // For now, keep analytics mocked until we have a real analytics table/source
-    return [
-        {
-            id: '1',
-            date: '2024-01-01',
-            impressions: 124500,
-            engagements: 5800,
-            new_followers: 840,
-            platform: 'Personal'
-        } as unknown as AnalyticsMetric // Casting for now to match interface broadly
-    ]
+    if (!supabase) {
+        return [
+            {
+                id: '1',
+                date: '2024-01-01',
+                impressions: 124500,
+                engagements: 5800,
+                new_followers: 840,
+                platform: 'Personal'
+            } as unknown as AnalyticsMetric
+        ]
+    }
+
+    const { data, error } = await supabase
+        .from('analytics_metrics')
+        .select('*')
+        .order('date', { ascending: true })
+
+    if (error) {
+        console.error('Error fetching analytics:', error)
+        return []
+    }
+
+    return data as AnalyticsMetric[]
 }
 
 export async function getSettings(): Promise<Settings> {
