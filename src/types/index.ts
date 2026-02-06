@@ -38,3 +38,14 @@ export interface AnalyticsMetric {
 }
 
 export type NewPost = Omit<Post, 'id' | 'created_at'>
+
+export interface StoryDrop {
+    id: string
+    created_at: string
+    topic: string
+    content: string
+    visuals_description?: string
+    platform: Platform
+    status: 'Pending' | 'Converted'
+}
+

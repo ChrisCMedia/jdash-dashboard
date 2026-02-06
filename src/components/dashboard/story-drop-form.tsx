@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { createPost } from '@/lib/data-service'
+import { createStoryDrop } from '@/lib/data-service'
 import { Platform } from '@/types'
 import { cn } from '@/lib/utils'
 import { Upload, Plus, Loader2, Sparkles, X } from 'lucide-react'
@@ -47,15 +47,11 @@ export function StoryDropForm() {
             // Combine visuals description with mock file names
             const visualsContent = [visuals, ...mockFiles.map(f => `[File: ${f}]`)].filter(Boolean).join('\n')
 
-            await createPost({
-                hook: topic,
+            await createStoryDrop({
+                topic,
                 content: points,
-                visuals_placeholder: visualsContent,
-                platform,
-                status: 'Draft',
-                date: new Date().toISOString(),
-                created_at: new Date().toISOString(),
-                last_edited_by: 'Client' // Assuming client uses this mostly
+                visuals_description: visualsContent,
+                platform
             })
 
             // Reset form

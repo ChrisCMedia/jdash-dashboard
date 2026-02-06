@@ -197,3 +197,24 @@ export async function createPost(post: Partial<Post>): Promise<Post | null> {
 
     return data as Post
 }
+
+export async function createStoryDrop(drop: any): Promise<any | null> {
+    if (!supabase) {
+        console.log('Mock story drop create:', drop)
+        return { ...drop, id: Math.random().toString(), created_at: new Date().toISOString(), status: 'Pending' }
+    }
+
+    const { data, error } = await supabase
+        .from('story_drops')
+        .insert({ ...drop, status: 'Pending' })
+        .select()
+        .single()
+
+    if (error) {
+        console.error('Error creating story drop:', error)
+        return null
+    }
+
+    return data
+}
+
