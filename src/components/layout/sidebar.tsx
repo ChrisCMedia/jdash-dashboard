@@ -10,13 +10,15 @@ import {
     Settings,
     UserCheck,
     Smartphone,
-    LogOut
+    LogOut,
+    Sparkles
 } from 'lucide-react'
 import { useAuth } from '@/components/providers/auth-provider'
 
 const navItems = [
     { name: 'Redaktionsplan', href: '/calendar', icon: Calendar },
     { name: 'Board', href: '/', icon: LayoutDashboard },
+    { name: 'Story Drop', href: '/story-drop', icon: Sparkles },
     { name: 'Feed View', href: '/feed', icon: Smartphone },
     { name: 'Client View', href: '/client', icon: UserCheck },
     { name: 'Analytics', href: '/analytics', icon: BarChart3 },
@@ -29,8 +31,8 @@ export function Sidebar() {
 
     const filteredItems = navItems.filter(item => {
         if (role === 'client') {
-            // Show Board, Calendar, Feed, Client View, Analytics
-            return ['/', '/calendar', '/feed', '/client', '/analytics'].includes(item.href)
+            // Show Board, Calendar, Story Drop, Feed, Client View, Analytics
+            return ['/', '/calendar', '/story-drop', '/feed', '/client', '/analytics'].includes(item.href)
         }
         return true
     })

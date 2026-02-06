@@ -177,3 +177,23 @@ export async function deletePost(id: string): Promise<boolean> {
 
     return true
 }
+
+export async function createPost(post: Partial<Post>): Promise<Post | null> {
+    if (!supabase) {
+        console.log('Mock create:', post)
+        return { ...post, id: Math.random().toString(), date: new Date().toISOString() } as Post
+    }
+
+    const { data, error } = await supabase
+        .from('posts')
+        .insert(post)
+        .select()
+        .single()
+
+    if (error) {
+        console.error('Error creating post:', error)
+        return null
+    }
+
+    return data as Post
+}
