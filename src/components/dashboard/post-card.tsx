@@ -1,9 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import { Post, PostStatus } from '@/types'
+import { Post, PostStatus, Series } from '@/types'
 import { cn } from '@/lib/utils'
-import { Linkedin, MessageSquare, Calendar, Pencil, Trash2 } from 'lucide-react'
+import { Linkedin, MessageSquare, Calendar, Pencil, Trash2, Layers } from 'lucide-react'
 
 interface PostCardProps {
     post: Post
@@ -102,6 +102,20 @@ export function PostCard({ post, onUpdate, onEdit, onDelete }: PostCardProps) {
                     </div>
                 </div>
             </div>
+
+            {/* Series Badge */}
+            {post.series && (
+                <div
+                    className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium w-fit"
+                    style={{
+                        backgroundColor: post.series.color + '15',
+                        color: post.series.color
+                    }}
+                >
+                    <Layers className="w-3 h-3" />
+                    <span>{post.series.title}</span>
+                </div>
+            )}
 
             {/* Hook Input */}
             <div className="pb-2 border-b border-white/5">

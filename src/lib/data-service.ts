@@ -1,46 +1,65 @@
-import { Post, AnalyticsMetric, Settings } from '@/types'
+import { Post, AnalyticsMetric, Settings, Series } from '@/types'
 import { supabase } from './supabase'
 
 // Fallback data if Supabase is empty or connection fails
 const MOCK_POSTS: Post[] = [
     {
         id: '1',
-        platform: 'LinkedIn Personal',
-        date: '2026-02-12',
-        status: 'Draft',
-        hook: 'Why most asset managers fail at scaling...',
-        content: 'It creates a bottleneck. \n\nThe traditional model relies too heavily on manual oversight. When you digitize the workflow, you regain 40% of your week.\n\n#AssetManagement #PropTech',
-        visuals_placeholder: 'Chart showing time saved vs. portfolio growth',
-        hashtags: '#AssetManagement #PropTech #Scaling',
-        internal_notes: 'Focus on pain points of mid-sized firms.',
+        platform: 'LinkedIn Company',
+        date: '2026-02-10',
+        status: 'Approved',
+        hook: '📈 Warum ESG heute über den Exit entscheidet.',
+        content: 'Früher war "Energieeffizienz" ein Bonus. Heute ist es die Bedingung für Finanzierung und Werterhalt. Bei YOUR TIMES prüfen wir bei jedem neuen Objekt zuerst das energetische Potenzial. 🔍 Ein Asset mit schlechtem ESG-Score ist heute ein Sanierungsfall mit Ansage. Wir zeigen unseren Partnern, wie man Bestandsobjekte zukunftssicher transformiert.',
+        hashtags: '#AssetManagement #ESG #Immobilienmarkt #Performance #YOURTIMES',
+        internal_notes: 'Serie: The Asset Check - Company-Fokus, Expertise in technischen Details',
         last_edited_by: 'Christopher',
         created_at: new Date().toISOString(),
-        feedback: ''
+        feedback: '',
+        series_id: 'series-1'
     },
     {
         id: '2',
-        platform: 'LinkedIn Company',
-        date: '2026-02-14',
+        platform: 'LinkedIn Personal',
+        date: '2026-02-12',
         status: 'Review',
-        hook: 'New Partnership Announcement 🚀',
-        content: 'We are thrilled to announce our collaboration with TechEstate.\n\nTogether, we are redefining how data drives real estate decisions.',
-        visuals_placeholder: 'Photo of the signing ceremony',
-        hashtags: '#Partnership #RealEstate #Innovation',
+        hook: '🏗️ Gute Entscheidungen brauchen Staub an den Schuhen.',
+        content: 'Manche Dinge lassen sich nicht per Zoom-Call lösen. Wer komplexe Projekte wirklich verstehen will, muss vor Ort sein. 🤩 Ich liebe den Austausch mit den Gewerken direkt auf der Fläche. Hier spürt man die Dynamik und löst Probleme, bevor sie zum Kostenfaktor werden. Projektentwicklung ist für mich Präsenzpflicht. 💪✨',
+        visuals_placeholder: 'Foto von Judith auf der Baustelle',
+        hashtags: '#Machertum #BaustellenUpdate #Projektentwicklung #JudithLenz',
+        internal_notes: 'Serie: Macher-Mittwoch - Judith-Fokus, Exekutionsstärke zeigen',
         last_edited_by: 'Judith',
-        feedback: 'Please check the company tagging.',
-        created_at: new Date().toISOString()
+        feedback: 'Bitte noch ein aktuelles Foto von der Baustelle einfügen.',
+        created_at: new Date().toISOString(),
+        series_id: 'series-2'
     },
     {
         id: '3',
-        platform: 'LinkedIn Personal',
-        date: '2026-02-18',
-        status: 'Approved',
-        hook: 'My top 3 learnings from Expo Real',
-        content: '1. Sustainability is no longer optional.\n2. AI is entering the construction phase.\n3. Networking is still king.\n\nWhat was your key takeaway?',
-        hashtags: '#ExpoReal #RealEstate #Learnings',
+        platform: 'LinkedIn Company',
+        date: '2026-02-17',
+        status: 'Draft',
+        hook: '🏥 Warum Senioren-WGs das Investment-Modell der Zukunft sind.',
+        content: 'Der Bedarf an ambulant betreuten Wohngemeinschaften wächst rasant. In Projekten wie Biesenthal sehen wir, dass dieses Modell nicht nur gesellschaftlich sinnvoll, sondern wirtschaftlich hochgradig resilient ist. 🌲 Für Investoren bedeutet das: Lange Pachtverträge, bonitätsstarke Betreiber und eine Zielgruppe, die Mietsicherheit garantiert.',
+        hashtags: '#HealthcareRealEstate #Seniorenwohnen #Investment #Demografie #YOURTIMES',
+        internal_notes: 'Serie: Demografie-Radar - Company-Fokus, Spezialwissen Healthcare',
         last_edited_by: 'Christopher',
         created_at: new Date().toISOString(),
-        feedback: ''
+        feedback: '',
+        series_id: 'series-3'
+    },
+    {
+        id: '4',
+        platform: 'LinkedIn Personal',
+        date: '2026-02-19',
+        status: 'Draft',
+        hook: '🤝 Ein Deal ist nur so stark wie das Vertrauen dahinter.',
+        content: 'Diese Woche wurde mir wieder klar: Wir vermitteln keine Steine, wir moderieren Übergänge. ❤️ Ein erfolgreicher Abschluss ("Deal Closed!") ist das Ergebnis von Monaten der Beziehungsarbeit. Wenn Käufer und Verkäufer sich am Ende mit einem Lächeln verabschieden, ist das mein größter Erfolg. 🥂✨',
+        visuals_placeholder: 'Foto vom Deal Closing oder Handshake',
+        hashtags: '#PeopleBusiness #Vertrauen #Networking #RealEstateSuccess #JudithLenz',
+        internal_notes: 'Serie: The Human Factor - Judith-Fokus, Vertrauen und Netzwerk',
+        last_edited_by: 'Judith',
+        created_at: new Date().toISOString(),
+        feedback: '',
+        series_id: 'series-4'
     }
 ]
 
@@ -52,8 +71,47 @@ const DEFAULT_SETTINGS: Settings = {
     notifyOnApproval: true
 }
 
+// Mock series data for development - YOUR TIMES Content Series
+// Defined here so it's available for getPosts function
+const MOCK_SERIES: Series[] = [
+    {
+        id: 'series-1',
+        title: 'The Asset Check',
+        description: 'Company-Fokus: Expertise in technischen Details und Rendite-Hebeln. ESG, Performance und Asset Management.',
+        color: '#D4AF37', // Gold
+        created_at: new Date().toISOString()
+    },
+    {
+        id: 'series-2',
+        title: 'Macher-Mittwoch',
+        description: 'Judith-Fokus: Nah am Geschehen, Exekutionsstärke zeigen. Baustellen-Updates und Projektentwicklung.',
+        color: '#F59E0B', // Amber
+        created_at: new Date().toISOString()
+    },
+    {
+        id: 'series-3',
+        title: 'Demografie-Radar',
+        description: 'Company-Fokus: Spezialwissen im Wachstumsmarkt Healthcare Real Estate und Seniorenwohnen.',
+        color: '#10B981', // Emerald
+        created_at: new Date().toISOString()
+    },
+    {
+        id: 'series-4',
+        title: 'The Human Factor',
+        description: 'Judith-Fokus: Vertrauen und Netzwerk als Basis für Off-Market Deals. People Business.',
+        color: '#EC4899', // Pink
+        created_at: new Date().toISOString()
+    }
+]
+
 export async function getPosts(): Promise<Post[]> {
-    if (!supabase) return MOCK_POSTS
+    if (!supabase) {
+        // Populate series data for mock posts
+        return MOCK_POSTS.map(post => ({
+            ...post,
+            series: post.series_id ? MOCK_SERIES.find(s => s.id === post.series_id) : undefined
+        }))
+    }
 
     const { data, error } = await supabase
         .from('posts')
@@ -62,11 +120,21 @@ export async function getPosts(): Promise<Post[]> {
 
     if (error) {
         console.error('Error fetching posts:', error)
-        return MOCK_POSTS
+        return MOCK_POSTS.map(post => ({
+            ...post,
+            series: post.series_id ? MOCK_SERIES.find(s => s.id === post.series_id) : undefined
+        }))
     }
 
-    if (!data || data.length === 0) return MOCK_POSTS
+    if (!data || data.length === 0) {
+        return MOCK_POSTS.map(post => ({
+            ...post,
+            series: post.series_id ? MOCK_SERIES.find(s => s.id === post.series_id) : undefined
+        }))
+    }
 
+    // For Supabase data, we'll need to join with series separately or use a view
+    // For now, return posts and let components fetch series as needed
     return data as Post[]
 }
 
@@ -216,5 +284,133 @@ export async function createStoryDrop(drop: any): Promise<any | null> {
     }
 
     return data
+}
+
+// ============ CONTENT SERIES FUNCTIONS ============
+
+export async function getSeries(): Promise<Series[]> {
+    if (!supabase) return MOCK_SERIES
+
+    const { data, error } = await supabase
+        .from('series')
+        .select('*')
+        .order('created_at', { ascending: false })
+
+    if (error) {
+        console.error('Error fetching series:', error)
+        return MOCK_SERIES
+    }
+
+    if (!data || data.length === 0) return MOCK_SERIES
+
+    return data as Series[]
+}
+
+export async function createSeries(series: Omit<Series, 'id' | 'created_at'>): Promise<Series | null> {
+    if (!supabase) {
+        console.log('Mock series create:', series)
+        return {
+            ...series,
+            id: `series-${Math.random().toString(36).substr(2, 9)}`,
+            created_at: new Date().toISOString()
+        }
+    }
+
+    const { data, error } = await supabase
+        .from('series')
+        .insert(series)
+        .select()
+        .single()
+
+    if (error) {
+        console.error('Error creating series:', error)
+        return null
+    }
+
+    return data as Series
+}
+
+export async function updateSeries(id: string, updates: Partial<Series>): Promise<Series | null> {
+    if (!supabase) {
+        console.log('Mock series update:', id, updates)
+        return null
+    }
+
+    const { data, error } = await supabase
+        .from('series')
+        .update({ ...updates, updated_at: new Date().toISOString() })
+        .eq('id', id)
+        .select()
+        .single()
+
+    if (error) {
+        console.error('Error updating series:', error)
+        return null
+    }
+
+    return data as Series
+}
+
+export async function deleteSeries(id: string): Promise<boolean> {
+    if (!supabase) {
+        console.log('Mock series delete:', id)
+        return true
+    }
+
+    // First, unassign all posts from this series
+    await supabase
+        .from('posts')
+        .update({ series_id: null })
+        .eq('series_id', id)
+
+    const { error } = await supabase
+        .from('series')
+        .delete()
+        .eq('id', id)
+
+    if (error) {
+        console.error('Error deleting series:', error)
+        return false
+    }
+
+    return true
+}
+
+export async function getPostsBySeries(seriesId: string): Promise<Post[]> {
+    if (!supabase) {
+        return MOCK_POSTS.filter(p => p.series_id === seriesId)
+    }
+
+    const { data, error } = await supabase
+        .from('posts')
+        .select('*')
+        .eq('series_id', seriesId)
+        .order('date', { ascending: true })
+
+    if (error) {
+        console.error('Error fetching posts by series:', error)
+        return []
+    }
+
+    return data as Post[]
+}
+
+export async function getSeriesById(id: string): Promise<Series | null> {
+    if (!supabase) {
+        return MOCK_SERIES.find(s => s.id === id) || null
+    }
+
+    const { data, error } = await supabase
+        .from('series')
+        .select('*')
+        .eq('id', id)
+        .single()
+
+    if (error) {
+        console.error('Error fetching series by id:', error)
+        return null
+    }
+
+    return data as Series
 }
 

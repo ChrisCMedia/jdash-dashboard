@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Post, PostStatus } from '@/types'
+import { Post, PostStatus, Series } from '@/types'
 import {
     Dialog,
     DialogContent,
@@ -15,8 +15,9 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { LinkedInPreview } from './linkedin-preview'
 import { supabase } from '@/lib/supabase'
+import { getSeries } from '@/lib/data-service'
 import { format } from 'date-fns'
-import { Upload, Loader2, Save, X, Calendar, User, Clock } from 'lucide-react'
+import { Upload, Loader2, Save, X, Calendar, User, Clock, Layers } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface PostEditorProps {
@@ -36,6 +37,12 @@ export function PostEditor({ post, isOpen, onClose, onSave, readOnly }: PostEdit
     const [imageUrl, setImageUrl] = useState('')
     const [isUploading, setIsUploading] = useState(false)
     const [currentUser, setCurrentUser] = useState('Christopher')
+    const [seriesId, setSeriesId] = useState<string | null>(null)
+    const [seriesList, setSeriesList] = useState<Series[]>([])
+
+    useEffect(() => {
+        loadSeries()
+    }, [])
 
     useEffect(() => {
         if (post) {
@@ -45,9 +52,15 @@ export function PostEditor({ post, isOpen, onClose, onSave, readOnly }: PostEdit
             setHashtags(post.hashtags || '')
             setNotes(post.internal_notes || '')
             setImageUrl(post.image_url || '')
+            setSeriesId(post.series_id || null)
             if (post.last_edited_by) setCurrentUser(post.last_edited_by)
         }
     }, [post])
+
+    const loadSeries = async () => {
+        const series = await getSeries()
+        setSeriesList(series)
+    }
 
     const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (readOnly) return
@@ -93,6 +106,7 @@ export function PostEditor({ post, isOpen, onClose, onSave, readOnly }: PostEdit
             hashtags,
             internal_notes: notes,
             image_url: imageUrl,
+            series_id: seriesId || undefined,
             last_edited_by: currentUser,
             updated_at: new Date().toISOString()
         })
@@ -160,6 +174,44 @@ export function PostEditor({ post, isOpen, onClose, onSave, readOnly }: PostEdit
                                         disabled={readOnly}
                                         className="bg-slate-900/50 border-white/5 text-gold-400/80 focus:border-gold-500/30 disabled:opacity-70 disabled:cursor-not-allowed"
                                     />
+                                </div>
+
+                                {/* Series Selector */}
+                                <div className="space-y-2">
+                                    <Label className="text-xs font-bold uppercase tracking-widest text-gold-500 flex items-center gap-2">
+                                        <Layers className="w-3.5 h-3.5" />
+                                        Content Series
+                                    </Label>
+                                    <select
+                                        value={seriesId || ''}
+                                        onChange={(e) => setSeriesId(e.target.value || null)}
+                                        disabled={readOnly}
+                                        className={cn(
+                                            "w-full bg-slate-900/50 border border-white/5 text-silver-100 rounded-lg px-4 py-3",
+                                            "focus:border-gold-500/30 focus:outline-none focus:ring-1 focus:ring-gold-500/20",
+                                            "disabled:opacity-70 disabled:cursor-not-allowed transition-all"
+                                        )}
+                                    >
+                                        <option value="" className="bg-slate-900">No Series</option>
+                                        {seriesList.map(series => (
+                                            <option
+                                                key={series.id}
+                                                value={series.id}
+                                                className="bg-slate-900"
+                                            >
+                                                {series.title}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    {seriesId && (
+                                        <div className="flex items-center gap-2 text-xs text-silver-500">
+                                            <div
+                                                className="w-2.5 h-2.5 rounded-full"
+                                                style={{ backgroundColor: seriesList.find(s => s.id === seriesId)?.color }}
+                                            />
+                                            <span>Part of &quot;{seriesList.find(s => s.id === seriesId)?.title}&quot;</span>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
 

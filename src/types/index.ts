@@ -1,6 +1,16 @@
 export type PostStatus = 'Draft' | 'Review' | 'Approved' | 'Posted'
 export type Platform = 'LinkedIn Personal' | 'LinkedIn Company'
 
+// Content Series for strategic theme management
+export interface Series {
+    id: string
+    title: string
+    description: string
+    color: string // Hex color for visual identification
+    created_at: string
+    updated_at?: string
+}
+
 export interface Post {
     id: string
     date: string // ISO Date string YYYY-MM-DD
@@ -17,6 +27,8 @@ export interface Post {
     updated_at?: string
     last_edited_by?: string
     image_url?: string
+    series_id?: string // Foreign key to series table
+    series?: Series // Populated series object for convenience
 }
 
 export interface Settings {
